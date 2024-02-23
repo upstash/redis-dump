@@ -64,6 +64,8 @@ func realMain() int {
 	caCert := flag.String("cacert", "", "TLS CACert file path")
 	cert := flag.String("cert", "", "TLS Cert file path")
 	key := flag.String("key", "", "TLS Key file path")
+	skipVerify := flag.Bool("skipverify", false, "Skip SSL Verification - DANGER - (Use to connect to Heroku Private Redis instances)")
+
 	flag.Parse()
 
 	if !isFlagPassed("db") {
@@ -72,7 +74,7 @@ func realMain() int {
 	var tlshandler *redisdump.TlsHandler
 	if isFlagPassed("tls") {
 		*tls = true
-		tlshandler = redisdump.NewTlsHandler(*tls, *caCert, *cert, *key)
+		tlshandler = redisdump.NewTlsHandler(*tls, *caCert, *cert, *key, *skipVerify)
 	}
 
 	var serializer func([]string) string

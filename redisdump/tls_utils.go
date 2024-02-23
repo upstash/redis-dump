@@ -12,18 +12,20 @@ import (
 )
 
 type TlsHandler struct {
-	tls        bool
-	caCertPath string
-	certPath   string
-	keyPath    string
+	tls                bool
+	caCertPath         string
+	certPath           string
+	keyPath            string
+	insecureSkipVerify bool
 }
 
-func NewTlsHandler(tls bool, caCertPath, certPath, keyPath string) *TlsHandler {
+func NewTlsHandler(tls bool, caCertPath string, certPath string, keyPath string, insecureSkipVerify bool) *TlsHandler {
 	return &TlsHandler{
-		tls:        tls,
-		caCertPath: caCertPath,
-		certPath:   certPath,
-		keyPath:    keyPath,
+		tls:                tls,
+		caCertPath:         caCertPath,
+		certPath:           certPath,
+		keyPath:            keyPath,
+		insecureSkipVerify: insecureSkipVerify,
 	}
 }
 
@@ -64,8 +66,9 @@ func createTlsConfig(tlsHandler *TlsHandler) (*tls.Config, error) {
 			}
 		}
 		tlsConfig = &tls.Config{
-			Certificates: []tls.Certificate{},
-			RootCAs:      certPool,
+			Certificates:       []tls.Certificate{},
+			RootCAs:            certPool,
+			InsecureSkipVerify: tlsHandler.insecureSkipVerify,
 		}
 		if tlsHandler.certPath != "" && tlsHandler.keyPath != "" {
 			cert, err := tls.LoadX509KeyPair(tlsHandler.certPath, tlsHandler.keyPath)
